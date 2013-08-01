@@ -1,0 +1,11 @@
+*.~ddp
+*.~dfm
+*.~pas
+*.dcu
+*.ddp
+*.txt
+
+# Package Files #
+*.jar
+*.war
+*.ear

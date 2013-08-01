@@ -1,0 +1,17 @@
+program pushbox;
+
+uses
+  Forms,
+  box in 'box.pas' {Form1},
+  design in 'design.pas' {Form3},
+  about in 'about.pas' {Form4};
+
+{$R *.RES}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TForm1, Form1);
+  Application.CreateForm(TForm3, Form3);
+  Application.CreateForm(TForm4, Form4);
+  Application.Run;
+end.
