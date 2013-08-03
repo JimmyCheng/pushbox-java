@@ -78,18 +78,8 @@ public class PushBox2 extends JFrame {
 	private static final int IMG_PUSHL1 = 12;
 	private static final int IMG_PUSHL2 = 13;
 
-	private static final int SND_BACKBOX = 0;
-	private static final int SND_BACKSOUND = 1;
-	private static final int SND_CLICK = 2;
-	private static final int SND_MOVE = 3;
-	private static final int SND_NOMOVE = 4;
-	private static final int SND_OVER = 5;
-	private static final int SND_PUSHBOX = 6;
-	private static final int SND_RETRY = 7;
 	
 	private BufferedImage[] IMG_Resource;
-	private AudioInputStream[] SND_Resource;
-	private Clip[] Clip_Resource;
 	private Cell[][] grid;
 
 	private byte lastX, lastY;
@@ -112,9 +102,6 @@ public class PushBox2 extends JFrame {
 
 	private void initializeResource() {
 		IMG_Resource = new BufferedImage[14];
-		SND_Resource = new AudioInputStream[8];
-		Clip_Resource = new Clip[8];
-
 		try {
 			IMG_Resource[IMG_BLACK] = ImageIO.read(this.getClass().getResource("images/Black.bmp"));
 			IMG_Resource[IMG_BALL]  = ImageIO.read(this.getClass().getResource("images/Ball.bmp"));
@@ -131,53 +118,12 @@ public class PushBox2 extends JFrame {
 			IMG_Resource[IMG_PUSHD2] = ImageIO.read(this.getClass().getResource("images/PushD2.bmp"));
 			IMG_Resource[IMG_PUSHL1] = ImageIO.read(this.getClass().getResource("images/PushL1.bmp"));			
 			IMG_Resource[IMG_PUSHL2] = ImageIO.read(this.getClass().getResource("images/PushL2.bmp"));
-
-			SND_Resource[SND_BACKBOX]   = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/backbox.wav"));
-			Clip_Resource[SND_BACKBOX] = AudioSystem.getClip();
-			Clip_Resource[SND_BACKBOX].open(SND_Resource[SND_BACKBOX]);
-			
-			SND_Resource[SND_BACKSOUND] = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/backsound.wav"));
-			Clip_Resource[SND_BACKSOUND] = AudioSystem.getClip();
-			Clip_Resource[SND_BACKSOUND].open(SND_Resource[SND_BACKSOUND]);
-			
-			SND_Resource[SND_CLICK]     = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/click.wav"));
-			Clip_Resource[SND_CLICK] = AudioSystem.getClip();
-			Clip_Resource[SND_CLICK].open(SND_Resource[SND_CLICK]);
-			
-			SND_Resource[SND_MOVE]      = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/move.wav"));
-			Clip_Resource[SND_MOVE] = AudioSystem.getClip();
-			Clip_Resource[SND_MOVE].open(SND_Resource[SND_MOVE]);
-			
-			SND_Resource[SND_NOMOVE]    = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/nomove.wav"));
-			Clip_Resource[SND_NOMOVE] = AudioSystem.getClip();
-			Clip_Resource[SND_NOMOVE].open(SND_Resource[SND_NOMOVE]);
-			
-			SND_Resource[SND_OVER]      = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/over.wav"));
-			Clip_Resource[SND_OVER] = AudioSystem.getClip();
-			Clip_Resource[SND_OVER].open(SND_Resource[SND_OVER]);
-			
-			SND_Resource[SND_PUSHBOX]   = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/pushbox.wav"));
-			Clip_Resource[SND_PUSHBOX] = AudioSystem.getClip();
-			Clip_Resource[SND_PUSHBOX].open(SND_Resource[SND_PUSHBOX]);
-			
-			SND_Resource[SND_RETRY]     = AudioSystem.getAudioInputStream(this.getClass().getResource("sound/retry.wav"));			
-			Clip_Resource[SND_RETRY] = AudioSystem.getClip();
-			Clip_Resource[SND_RETRY].open(SND_Resource[SND_RETRY]);
-			
-		} catch (IOException | UnsupportedAudioFileException | LineUnavailableException e) {
+		} catch (IOException e) {
 			System.out.println("Failed to load game resources!");
 		}
 		
-	}
-	
-	// following code should be optimized...use array, load resource in advance.
-	private void playSound(int soundIndex) {
-	    if (Clip_Resource[soundIndex].isRunning()) {
-	    	Clip_Resource[soundIndex].stop();
-	    }
-	    
-	    Clip_Resource[soundIndex].setFramePosition(0);
-	    Clip_Resource[soundIndex].start();
+		SoundEffect.init();
+		SoundEffect.volume = SoundEffect.Volume.LOW; 
 	}
 	
 	private void initializeGUI() {
@@ -235,7 +181,7 @@ public class PushBox2 extends JFrame {
 			DOWN = 1;
 			break;
 		default:
-			playSound(SND_NOMOVE);
+			SoundEffect.NOMOVE.play();
 			return;
 		}
 
@@ -246,12 +192,12 @@ public class PushBox2 extends JFrame {
 
 		// Can't move
 		if (nCell.wall) {
-			playSound(SND_NOMOVE);
+			SoundEffect.NOMOVE.play();
 			return;
 		}
 
 		if (nCell.box && (nnCell.box || nnCell.wall)) {
-			playSound(SND_NOMOVE);
+			SoundEffect.NOMOVE.play();
 			return;
 		}
 
@@ -263,9 +209,9 @@ public class PushBox2 extends JFrame {
 		if (nCell.box) {
 			nCell.box = false;
 			nnCell.box = true;
-			playSound(SND_PUSHBOX);
+			SoundEffect.PUSHBOX.play();
 		} else {
-			playSound(SND_MOVE);
+			SoundEffect.MOVE.play();
 		}
 
 		lastX = currX;
