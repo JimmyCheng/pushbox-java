@@ -15,6 +15,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Stack;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +30,20 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+
+enum Direction {
+   UP(0), RIGHT(1), DOWN(2), LEFT(3);
+   
+   int order;
+   
+   Direction(int id) {
+	   order = id;
+   }
+   
+   public int getOrder() {
+	return order;
+   }
+}
 
 class Cell {
 
@@ -61,6 +76,13 @@ class Cell {
 	}
 }
 
+class Position {
+	public byte x;
+	public byte y;
+	public Direction dir;
+	public boolean boxmoved;
+}
+
 public class PushBox2 extends JFrame {
 
 	private static final int IMG_BLACK = 0;
@@ -84,12 +106,11 @@ public class PushBox2 extends JFrame {
 
 	private byte lastX, lastY;
 	private byte currX, currY;
-	private boolean BoxMoved;
 	private int taskID;
 	private int boxnum;
 	private int steps;
-	private boolean soundflag;
-
+    public Stack<Position> history;
+    
 	public JLabel label;
 
 	public PushBox2() {
@@ -124,6 +145,8 @@ public class PushBox2 extends JFrame {
 		
 		SoundEffect.init();
 		SoundEffect.volume = SoundEffect.Volume.LOW; 
+
+		history = new Stack<Position>();
 	}
 	
 	private void initializeGUI() {
@@ -157,29 +180,28 @@ public class PushBox2 extends JFrame {
 
 	protected void processKeyDown(KeyEvent e) {
 		byte xflag = 0, yflag = 0;
-		byte UP = 0, RIGHT = 0, DOWN = 0, LEFT = 0;
+		Direction direct;
 
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
-			xflag = 0;
 			yflag = -1;
-			LEFT = 1;
+			direct = Direction.LEFT;
 			break;
 		case KeyEvent.VK_UP:
 			xflag = -1;
-			yflag = 0;
-			UP = 1;
+			direct = Direction.UP;
 			break;
 		case KeyEvent.VK_RIGHT:
-			xflag = 0;
 			yflag = 1;
-			RIGHT = 1;
+			direct = Direction.RIGHT;
 			break;
 		case KeyEvent.VK_DOWN:
 			xflag = 1;
-			yflag = 0;
-			DOWN = 1;
+			direct = Direction.DOWN;
 			break;
+		case KeyEvent.VK_F2:
+			Undo();
+			return;
 		default:
 			SoundEffect.NOMOVE.play();
 			return;
@@ -204,21 +226,73 @@ public class PushBox2 extends JFrame {
 		// Can move.
 		cCell.spirit = false;
 		nCell.spirit = true;
-		nCell.action = UP * 1 + RIGHT * 3 + DOWN * 5 + LEFT * 7;
-
+		nCell.action = direct.getOrder()*2 + 1;  //To calculate the image index.
+		
+		Position pos = new Position();
+		pos.x = currX;
+		pos.y = currY;
+		pos.dir = direct;
+		
 		if (nCell.box) {
 			nCell.box = false;
 			nnCell.box = true;
+			pos.boxmoved = true;
 			SoundEffect.PUSHBOX.play();
 		} else {
 			SoundEffect.MOVE.play();
 		}
-
-		lastX = currX;
-		lastY = currY;
+				
+		history.push(pos);
+		
 		currX = (byte) (currX + xflag);
 		currY = (byte) (currY + yflag);
 
+		drawView();
+	}
+
+	private void Undo() {
+		byte xflag=0, yflag =0;
+		 
+		if (history.empty()) {
+			SoundEffect.NOMOVE.play();
+			return;
+		}
+		
+		//restore current position.
+		grid[currX][currY].spirit = false;
+		
+		Position pos = history.pop();
+		
+		if(pos.boxmoved) {
+			grid[currX][currY].box = true;
+			
+			switch(pos.dir.getOrder()) {
+			case 0: //UP
+				xflag = -1;
+				break;
+			case 1: //Right
+				yflag = 1;
+			    break;
+			    
+			case 2: //Down;
+				xflag = 1;
+				break;
+			case 3: //Left
+				yflag = -1;
+				break;
+			default:
+				System.out.println("Error, should not come here.!");
+			}
+			grid[currX + xflag][currY + yflag].box = false;
+		}
+		
+		//set new current position.
+		currX = pos.x;
+		currY = pos.y;		
+		grid[currX][currY].spirit = true;
+		
+		SoundEffect.MOVE.play();	
+		
 		drawView();
 	}
 
