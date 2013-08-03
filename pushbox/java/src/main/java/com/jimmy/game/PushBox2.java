@@ -104,19 +104,19 @@ public class PushBox2 extends JFrame {
 	private BufferedImage[] IMG_Resource;
 	private Cell[][] grid;
 
-	private byte lastX, lastY;
 	private byte currX, currY;
 	private int taskID;
 	private int boxnum;
 	private int steps;
     public Stack<Position> history;
     
-	public JLabel label;
+	public JLabel lblView;
+	public StatusBar lblStatus;
 
 	public PushBox2() {
 		initializeResource();
 		initializeGUI();
-		initializeTask(88);
+		initializeTask(2);
 		drawView();
 		setVisible(true);
 	}
@@ -152,12 +152,12 @@ public class PushBox2 extends JFrame {
 	private void initializeGUI() {
 		setTitle("Push Box");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(480, 420);
+		setSize(480, 420+60);
 		setResizable(false);
 
-		label = new JLabel();
+		lblView = new JLabel();
 
-		label.addKeyListener(new KeyListener() {
+		lblView.addKeyListener(new KeyListener() {
 
 			public void keyTyped(KeyEvent e) {
 			}
@@ -171,11 +171,14 @@ public class PushBox2 extends JFrame {
 			}
 		});
 
-		label.setFocusable(true);
+		lblView.setFocusable(true);
+		
+		lblStatus = new StatusBar();
 
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
-		cp.add(label, BorderLayout.NORTH);
+		cp.add(lblView, BorderLayout.NORTH);
+		cp.add(lblStatus, BorderLayout.SOUTH);
 	}
 
 	protected void processKeyDown(KeyEvent e) {
@@ -242,7 +245,7 @@ public class PushBox2 extends JFrame {
 			SoundEffect.MOVE.play();
 		}
 				
-		history.push(pos);
+		history.push(pos);  //save the move history.
 		
 		currX = (byte) (currX + xflag);
 		currY = (byte) (currY + yflag);
@@ -312,7 +315,7 @@ public class PushBox2 extends JFrame {
 		}
 		g.dispose();
 
-		label.setIcon(new ImageIcon(view));
+		lblView.setIcon(new ImageIcon(view));
 	}
 
 	class TimerTaskTest extends TimerTask {
@@ -355,7 +358,7 @@ public class PushBox2 extends JFrame {
 			return false;
 		} else {
 			
-			grid = new Cell[14][16];
+			grid = new Cell[14][16];  //14 rows and 16 columns.
 			
 			for (byte i = 0; i < 14; i++) {
 				for (byte j = 0; j < 16; j++) {
@@ -386,7 +389,7 @@ public class PushBox2 extends JFrame {
 						grid[i][j].ball = true;
 						break;
 
-					case 7:
+					case 7: //box is full.
 						grid[i][j].box = true;
 						grid[i][j].ball = true;
 						break;
@@ -468,7 +471,6 @@ public class PushBox2 extends JFrame {
 		if (cell.floor) {
 			return IMG_Resource[IMG_FLOOR];
 		}
-
 		return null;
 	}
 
@@ -477,5 +479,4 @@ public class PushBox2 extends JFrame {
 		pb.setVisible(true);
 		pb.animate();
 	}
-
 }
