@@ -68,7 +68,7 @@ public class SnakeView extends TileView {
      * between snake movements. This will decrease as apples are captured.
      */
     private long mScore = 0;
-    private long mMoveDelay = 600;
+    private long mMoveDelay = 100;  //Jimmy: original is 600. change to 200.
     /**
      * mLastMove: Tracks the absolute time when the snake last moved, and is used to determine if a
      * move should be made based on mMoveDelay.
@@ -173,7 +173,7 @@ public class SnakeView extends TileView {
         addRandomApple();
         addRandomApple();
 
-        mMoveDelay = 600;
+        mMoveDelay = 200;  //Jimmy: updated to 200. 
         mScore = 0;
     }
 
@@ -410,6 +410,7 @@ public class SnakeView extends TileView {
     public void update() {
         if (mMode == RUNNING) {
             long now = System.currentTimeMillis();
+            long actualDelay = 0;
 
             if (now - mLastMove > mMoveDelay) {
                 clearTiles();
@@ -418,7 +419,15 @@ public class SnakeView extends TileView {
                 updateApples();
                 mLastMove = now;
             }
-            mRedrawHandler.sleep(mMoveDelay);
+
+            //This will make the move more smoothly.
+            long after = System.currentTimeMillis();
+            actualDelay = mMoveDelay - (after-now);
+            
+            if( actualDelay < 0 )
+            	actualDelay = 0;
+
+            mRedrawHandler.sleep(actualDelay);
         }
 
     }
@@ -461,19 +470,19 @@ public class SnakeView extends TileView {
         mDirection = mNextDirection;
 
         switch (mDirection) {
-            case EAST: {
+            case EAST: {  //Right.
                 newHead = new Coordinate(head.x + 1, head.y);
                 break;
             }
-            case WEST: {
+            case WEST: {  //Left
                 newHead = new Coordinate(head.x - 1, head.y);
                 break;
             }
-            case NORTH: {
+            case NORTH: { //Up
                 newHead = new Coordinate(head.x, head.y - 1);
                 break;
             }
-            case SOUTH: {
+            case SOUTH: { //Down
                 newHead = new Coordinate(head.x, head.y + 1);
                 break;
             }

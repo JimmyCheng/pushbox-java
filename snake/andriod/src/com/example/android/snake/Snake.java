@@ -36,10 +36,7 @@ import android.widget.TextView;
  * game.
  * 
  */
-public class Snake extends Activity implements 
-GestureDetector.OnGestureListener,
-GestureDetector.OnDoubleTapListener{
-
+public class Snake extends Activity {
 	private static final int SWIPE_MIN_DISTANCE = 120;  
 	private static final int SWIPE_MAX_OFF_PATH = 250;  
 	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
@@ -78,10 +75,10 @@ GestureDetector.OnDoubleTapListener{
         // Instantiate the gesture detector with the
         // application context and an implementation of
         // GestureDetector.OnGestureListener
-        mDetector = new GestureDetectorCompat(this, this);
+        mDetector = new GestureDetectorCompat(this, new SnakeGesture());
         // Set the gesture detector as the double tap
         // listener.
-        mDetector.setOnDoubleTapListener(this);
+        mDetector.setOnDoubleTapListener(new DoubleTap());
         
         
         if (savedInstanceState == null) {
@@ -96,42 +93,10 @@ GestureDetector.OnDoubleTapListener{
                 mSnakeView.setMode(SnakeView.PAUSE);
             }
         }
-        
-//        mSnakeView.setOnTouchListener(new OnTouchListener() {
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                if (mSnakeView.getGameState() == SnakeView.RUNNING) {
-//                    // Normalize x,y between 0 and 1
-//                    float x = event.getX() / v.getWidth();
-//                    float y = event.getY() / v.getHeight();
-//
-//                    // Direction will be [0,1,2,3] depending on quadrant
-//                    int direction = 0;
-//                    direction = (x > y) ? 1 : 0;
-//                    direction |= (x > 1 - y) ? 2 : 0;
-//
-//                    // Direction is same as the quadrant which was clicked
-//                    mSnakeView.moveSnake(direction);
-//
-//                } else {
-//                    // If the game is not running then on touching any part of the screen
-//                    // we start the game by sending MOVE_UP signal to SnakeView
-//                    mSnakeView.moveSnake(MOVE_UP);
-//                }
-//	    		System.out.println("Test on OnTouch");
-//                Log.i("MyGesture", "onDown");  
-//                
-//                return false;
-//            }
-//        });
-         
-
     }
     
     @Override 
     public boolean onTouchEvent(MotionEvent event){ 
-        //Log.d(DEBUG_TAG,"onTouchEvent: " + event.toString()); 
     	
     	if (mSnakeView.getGameState() != SnakeView.RUNNING) {
     		mSnakeView.moveSnake(MOVE_UP);
@@ -163,7 +128,6 @@ GestureDetector.OnDoubleTapListener{
      */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent msg) {
-
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP:
                 mSnakeView.moveSnake(MOVE_UP);
@@ -178,88 +142,89 @@ GestureDetector.OnDoubleTapListener{
                 mSnakeView.moveSnake(MOVE_LEFT);
                 break;
         }
-
         return super.onKeyDown(keyCode, msg);
     }
+    
+	class DoubleTap implements GestureDetector.OnDoubleTapListener {
+		@Override
+		public boolean onDoubleTap(MotionEvent e) {
+			// TODO Auto-generated method stub
+			return false;
+		}
 
-	@Override
-	public boolean onDoubleTap(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
+		@Override
+		public boolean onDoubleTapEvent(MotionEvent e) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public boolean onSingleTapConfirmed(MotionEvent e) {
+			// TODO Auto-generated method stub
+			return false;
+		}		
 	}
+	
+	class SnakeGesture implements GestureDetector.OnGestureListener {
+		@Override
+		public boolean onDown(MotionEvent e) {
+			return true;
+		}
 
-	@Override
-	public boolean onDoubleTapEvent(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+	    	float deltaX = e1.getX() - e2.getX();
+	    	float deltaY = e1.getY() - e2.getY();
+	    	
+	    	//Not a fling event.
+	    	if ((Math.abs(deltaX) < SWIPE_MIN_DISTANCE) && (Math.abs(deltaY) <SWIPE_MIN_DISTANCE)) {
+	    		return false;
+	    	}
+	    	
+	    	//Horizontal move.
+	    	if (Math.abs(deltaX) > Math.abs(deltaY)) {
+	    		
+	    		if(deltaX > 0) {
+	    			mSnakeView.moveSnake(MOVE_LEFT);
+	    			Log.d(DEBUG_TAG, "onFling: move left");
+	    		} else {
+	    			mSnakeView.moveSnake(MOVE_RIGHT);
+	    			Log.d(DEBUG_TAG, "onFling: move right");
+	    		}
+	    	}else{  //vertical move.
+	    		if(deltaY > 0) {
+	    			mSnakeView.moveSnake(MOVE_UP);
+	    			Log.d(DEBUG_TAG, "onFling: move up");
+	    		} else {
+	    			mSnakeView.moveSnake(MOVE_DOWN);
+	    			Log.d(DEBUG_TAG, "onFling: move down");
+	    		}    		
+	    	}
+			return true;
+		}
+
+		@Override
+		public void onLongPress(MotionEvent e) {
+			// TODO Auto-generated method stub
+		}
+
+		@Override
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public void onShowPress(MotionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public boolean onSingleTapUp(MotionEvent e) {
+			// TODO Auto-generated method stub
+			return false;
+		}		
 	}
-
-	@Override
-	public boolean onSingleTapConfirmed(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean onDown(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return true; //Jimmy updated this...
-	}
-
-	@Override
-	public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-    	float deltaX = e1.getX() - e2.getX();
-    	float deltaY = e1.getY() - e2.getY();
-    	
-    	//Not a fling event.
-    	if ((Math.abs(deltaX) < SWIPE_MIN_DISTANCE) && (Math.abs(deltaY) <SWIPE_MIN_DISTANCE)) {
-    		return false;
-    	}
-    	
-    	//Horizontal move.
-    	if (Math.abs(deltaX) > Math.abs(deltaY)) {
-    		
-    		if(deltaX > 0) {
-    			mSnakeView.moveSnake(MOVE_LEFT);
-    			Log.d(DEBUG_TAG, "onFling: move left");
-    		} else {
-    			mSnakeView.moveSnake(MOVE_RIGHT);
-    			Log.d(DEBUG_TAG, "onFling: move right");
-    		}
-    	}else{  //vertical move.
-    		if(deltaY > 0) {
-    			mSnakeView.moveSnake(MOVE_UP);
-    			Log.d(DEBUG_TAG, "onFling: move up");
-    		} else {
-    			mSnakeView.moveSnake(MOVE_DOWN);
-    			Log.d(DEBUG_TAG, "onFling: move down");
-    		}    		
-    	}
-		return true;
-	}
-
-	@Override
-	public void onLongPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void onShowPress(MotionEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean onSingleTapUp(MotionEvent e) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
+    
 }
