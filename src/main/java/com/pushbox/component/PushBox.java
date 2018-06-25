@@ -34,14 +34,12 @@ public class PushBox extends JFrame {
 	private static final int IMG_PUSHL1 = 12;
 	private static final int IMG_PUSHL2 = 13;
 
-	
+
 	private BufferedImage[] IMG_Resource;
 	private Cell[][] grid;
 
 	private byte currX, currY;
 	private int taskID;
-	private int boxCount;
-	private int boxDone;
 	private int steps;
 
     public Stack<Position> history;
@@ -180,17 +178,6 @@ public class PushBox extends JFrame {
 			nCell.box = false;
 			nnCell.box = true;
 			pos.boxmoved = true;
-
-			if(nnCell.ball) {
-				boxDone++;
-				//the logic is too complicated to track this.
-				// instead of checking this, we can scan all the balls, check whether they are all covered with box.
-                if(boxDone == boxCount) {
-					JOptionPane.showMessageDialog(this, "You win!");
-					//todo will be a dialog to go next or replay.
-					newGame(taskID + 1);
-				}
-			}
 			SoundEffect.PUSHBOX.play();;
 		} else {
 			SoundEffect.MOVE.play();
@@ -202,6 +189,33 @@ public class PushBox extends JFrame {
 		currY = (byte) (currY + yflag);
 
 		drawView();
+
+		gameWin();
+	}
+
+	/**
+	 * Check whether the game has been finished.
+	 */
+	private void gameWin(){
+		boolean gameFinished = true;
+		for (int i = 0; i < 14; i++) {
+			for (int j = 0; j < 16; j++) {
+				Cell cell = grid[i][j];
+				if(cell.ball && !cell.box) {
+					gameFinished = false;
+					break;
+				}
+			}
+			if(!gameFinished) {
+				break;
+			}
+		}
+
+		if(gameFinished) {
+			JOptionPane.showMessageDialog(this, "You win!");
+			//todo will be a dialog to go next or replay.
+			newGame(taskID + 1);
+		}
 	}
 
 	private void Undo() {
@@ -294,16 +308,13 @@ public class PushBox extends JFrame {
 
 		byte[] data = null;
 
-		boxCount = 0;
-		boxDone = 0;
 		try {
 			URI uri = this.getClass().getResource(fileName).toURI();
 			data = Files.readAllBytes(Paths.get(uri));
 		} catch (Exception e) {
 			e.printStackTrace();
+			//todo exception handlinng.
 		}
-
-		System.out.println(Array.getLength(data));
 
 		if (Array.getLength(data) != 224) {
 			return false;
@@ -333,7 +344,6 @@ public class PushBox extends JFrame {
 					case 3:
 						grid[i][j].floor = true;
 						grid[i][j].box = true;
-						boxCount++;
 						break;
 
 					case 4:
@@ -343,8 +353,6 @@ public class PushBox extends JFrame {
 					case 7: //box is full.
 						grid[i][j].box = true;
 						grid[i][j].ball = true;
-						boxDone++;
-						boxCount++;
 						break;
 
 					case 57:
