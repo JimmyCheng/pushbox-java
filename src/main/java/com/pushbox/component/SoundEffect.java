@@ -1,4 +1,4 @@
-package com.jimmy.game;
+package com.pushbox.component;
 
 import java.io.*;
 import java.net.URL;

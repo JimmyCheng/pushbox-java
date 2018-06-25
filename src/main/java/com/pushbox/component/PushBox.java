@@ -1,17 +1,14 @@
-package com.jimmy.game;
+package com.pushbox.component;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Stack;
@@ -19,11 +16,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
 
 enum Direction {
@@ -78,7 +70,7 @@ class Position {
 	public boolean boxmoved;
 }
 
-public class PushBox2 extends JFrame {
+public class PushBox extends JFrame {
 
 	private static final int IMG_BLACK = 0;
 	private static final int IMG_BALL = 1;
@@ -109,15 +101,15 @@ public class PushBox2 extends JFrame {
 	public JLabel lblView;
 	public StatusBar lblStatus;
 
-	public PushBox2() {
+	public PushBox() {
 		initializeResource();
 		initializeGUI();
-		newGame(2);
 	}
 
-	private void newGame(int taksId) {
+	public void newGame(int taksId) {
 		initializeTask(taksId);
 		drawView();
+		animate();
 		setVisible(true);
 	}
 
@@ -344,9 +336,7 @@ public class PushBox2 extends JFrame {
 
 	private void animate() {
 		Timer timer = new Timer();
-		timer.schedule(new TimerTaskTest(), 500, 500); // after 0.5seconds,
-														// animates every 0.5
-														// seconds.
+		timer.schedule(new TimerTaskTest(), 500, 500);
 	}
 
 	private boolean initializeTask(int taskID) {
@@ -489,9 +479,5 @@ public class PushBox2 extends JFrame {
 		return null;
 	}
 
-	public static void main(String[] args) {
-		PushBox2 pb = new PushBox2();
-		pb.setVisible(true);
-		pb.animate();
-	}
+
 }

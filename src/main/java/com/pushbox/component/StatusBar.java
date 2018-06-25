@@ -1,4 +1,4 @@
-package com.jimmy.game;
+package com.pushbox.component;
 
 //refer to http://www.yaldex.com/java_tutorial/0338116072.htm.
 
