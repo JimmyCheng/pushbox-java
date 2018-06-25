@@ -143,6 +143,9 @@ public class PushBox extends JFrame {
 		case KeyEvent.VK_F2:
 			Undo();
 			return;
+		case KeyEvent.VK_U:
+			Undo();
+			return;
 		default:
 			SoundEffect.NOMOVE.play();
 			return;
@@ -212,9 +215,17 @@ public class PushBox extends JFrame {
 		}
 
 		if(gameFinished) {
-			JOptionPane.showMessageDialog(this, "You win!");
-			//todo will be a dialog to go next or replay.
-			newGame(taskID + 1);
+			Icon spiritIcon = new ImageIcon(IMG_Resource[IMG_PUSHU1]);
+			Object stringArray[] = { "Replay", "Next Task" };
+			int result = JOptionPane.showOptionDialog(this, "Mission accomplished, congratulations!", "Select an Option",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, spiritIcon, stringArray,
+					stringArray[1]);
+
+	        if(result == JOptionPane.YES_OPTION) {
+				newGame(taskID);
+			} else {
+				newGame(taskID + 1);
+			}
 		}
 	}
 
