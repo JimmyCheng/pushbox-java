@@ -18,60 +18,7 @@ import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-enum Direction {
-   UP(0), RIGHT(1), DOWN(2), LEFT(3);
-   
-   int order;
-   
-   Direction(int id) {
-	   order = id;
-   }
-   
-   public int getOrder() {
-	return order;
-   }
-}
-
-class Cell {
-
-	static final byte NONE = 0;
-	static final byte UP1 = 1;
-	static final byte UP2 = 2;
-	static final byte RIGHT1 = 3;
-	static final byte RIGHT2 = 4;
-	static final byte DOWN1 = 5;
-	static final byte DOWN2 = 6;
-	static final byte LEFT1 = 7;
-	static final byte LEFT2 = 8;
-
-	boolean black;
-	boolean wall;
-	boolean floor;
-	boolean box;
-	boolean ball;
-	boolean spirit;
-	int action;
-
-	public Cell() {
-		black = false;
-		wall = false;
-		floor = false;
-		box = false;
-		ball = false;
-		spirit = false;
-		action = NONE;
-	}
-}
-
-class Position {
-	public byte x;
-	public byte y;
-	public Direction dir;
-	public boolean boxmoved;
-}
-
 public class PushBox extends JFrame {
-
 	private static final int IMG_BLACK = 0;
 	private static final int IMG_BALL = 1;
 	private static final int IMG_FLOOR = 2;
@@ -96,6 +43,7 @@ public class PushBox extends JFrame {
 	private int boxCount;
 	private int boxDone;
 	private int steps;
+
     public Stack<Position> history;
     
 	public JLabel lblView;
@@ -478,6 +426,4 @@ public class PushBox extends JFrame {
 		}
 		return null;
 	}
-
-
 }
