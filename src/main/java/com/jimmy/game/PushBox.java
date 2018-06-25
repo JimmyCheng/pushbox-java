@@ -13,7 +13,6 @@ import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Stack;
 import java.util.Timer;
@@ -25,11 +24,7 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 enum Direction {
    UP(0), RIGHT(1), DOWN(2), LEFT(3);
@@ -106,7 +101,8 @@ public class PushBox2 extends JFrame {
 
 	private byte currX, currY;
 	private int taskID;
-	private int boxnum;
+	private int boxCount;
+	private int boxDone;
 	private int steps;
     public Stack<Position> history;
     
@@ -116,7 +112,11 @@ public class PushBox2 extends JFrame {
 	public PushBox2() {
 		initializeResource();
 		initializeGUI();
-		initializeTask(2);
+		newGame(2);
+	}
+
+	private void newGame(int taksId) {
+		initializeTask(taksId);
 		drawView();
 		setVisible(true);
 	}
@@ -240,7 +240,18 @@ public class PushBox2 extends JFrame {
 			nCell.box = false;
 			nnCell.box = true;
 			pos.boxmoved = true;
-			SoundEffect.PUSHBOX.play();
+
+			if(nnCell.ball) {
+				boxDone++;
+				//the logic is too complicated to track this.
+				// instead of checking this, we can scan all the balls, check whether they are all covered with box.
+                if(boxDone == boxCount) {
+					JOptionPane.showMessageDialog(this, "You win!");
+					//todo will be a dialog to go next or replay.
+					newGame(taskID + 1);
+				}
+			}
+			SoundEffect.PUSHBOX.play();;
 		} else {
 			SoundEffect.MOVE.play();
 		}
@@ -339,12 +350,14 @@ public class PushBox2 extends JFrame {
 	}
 
 	private boolean initializeTask(int taskID) {
+		this.taskID = taskID;
 
 		String fileName = "task/task" + taskID + ".tsk";
 
 		byte[] data = null;
 
-		boxnum = 0;
+		boxCount = 0;
+		boxDone = 0;
 		try {
 			URI uri = this.getClass().getResource(fileName).toURI();
 			data = Files.readAllBytes(Paths.get(uri));
@@ -382,7 +395,7 @@ public class PushBox2 extends JFrame {
 					case 3:
 						grid[i][j].floor = true;
 						grid[i][j].box = true;
-						boxnum++;
+						boxCount++;
 						break;
 
 					case 4:
@@ -392,6 +405,8 @@ public class PushBox2 extends JFrame {
 					case 7: //box is full.
 						grid[i][j].box = true;
 						grid[i][j].ball = true;
+						boxDone++;
+						boxCount++;
 						break;
 
 					case 57:
