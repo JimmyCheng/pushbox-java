@@ -52,8 +52,12 @@ public class PushBox extends JFrame {
 		initializeGUI();
 	}
 
-	public void newGame(int taksId) {
-		initializeTask(taksId);
+	public void newGame(int taskId) {
+		initializeTask(taskId);
+		steps = 0;
+		lblStatus.setTaskId(taskId);
+		lblStatus.setStepNumber(steps);
+
 		drawView();
 		animate();
 		setVisible(true);
@@ -190,6 +194,8 @@ public class PushBox extends JFrame {
 		
 		currX = (byte) (currX + xflag);
 		currY = (byte) (currY + yflag);
+		steps++;
+		lblStatus.setStepNumber(steps);
 
 		drawView();
 
