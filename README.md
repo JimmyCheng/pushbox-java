@@ -18,14 +18,14 @@ The intention of this game is to demonstrate the Java Swing desgin and MVC(model
 -----------
 The game is simple, use key "up", "left", "right", "down" to move the little man around. Use key "u" to undo a step. e.g. for the task 1, it is displayed:
 
-![Task1](Task1.png =962x966)
+![Task1](Task1.png){:height="962px" width="966px"}
 
 The target is to make sure all the balls are covered by the box.
 
 click the menu "Game" and select "Jump to Task", input the task ID from 1 to 100, e.g. input 33
 then the task 33 is displayed:
 
-![Task33](Task33.png =968x960)
+![Task33](Task33.png){:height="968px" width="960px"}
 
 HowToInstall
 -----------
