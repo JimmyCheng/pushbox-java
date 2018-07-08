@@ -16,16 +16,47 @@ The intention of this game is to demonstrate the Java Swing desgin and MVC(model
 
 ### HowToPlay
 -----------
-Swing was developed to provide a more sophisticated set of GUI components than the earlier Abstract Window Toolkit (AWT). Swing provides a look and feel that emulates the look and feel of several platforms, and also supports a pluggable look and feel that allows applications to have a look and feel unrelated to the underlying platform. It has more powerful and flexible components than AWT. In addition to familiar components such as buttons, check boxes and labels, Swing provides several advanced components such as tabbed panel, scroll panes, trees, tables, and lists.
+The game is simple, use key "up", "left", "right", "down" to move the little man around. Use key "u" to undo a step. e.g. for the task 1, it is displayed:
 
-![Task1](Task1.png?raw=true "Task 1")
-![Task33](Task33.png?raw=true "Task 33")
+![Task1](Task1.png =962x966 "Task 1")
+
+The target is to make sure all the balls are covered by the box.
+
+click the menu "Game" and select "Jump to Task", input the task ID from 1 to 100, e.g. input 33
+then the task 33 is displayed:
+
+![Task33](Task33.png =968x960 "Task 33")
 
 HowToInstall
 -----------
-Swing was developed to provide a more sophisticated set of GUI components than the earlier Abstract Window Toolkit (AWT). Swing provides a look and feel that emulates the look and feel of several platforms, and also supports a pluggable look and feel that allows applications to have a look and feel unrelated to the underlying platform. It has more powerful and flexible components than AWT. In addition to familiar components such as buttons, check boxes and labels, Swing provides several advanced components such as tabbed panel, scroll panes, trees, tables, and lists.
-
+Clone the git respository use `git clone` and import the project in eclipse or intelij.
 
 Design Highlight
 -----------
-Swing was developed to provide a more sophisticated set of GUI components than the earlier Abstract Window Toolkit (AWT). Swing provides a look and feel that emulates the look and feel of several platforms, and also supports a pluggable look and feel that allows applications to have a look and feel unrelated to the underlying platform. It has more powerful and flexible components than AWT. In addition to familiar components such as buttons, check boxes and labels, Swing provides several advanced components such as tabbed panel, scroll panes, trees, tables, and lists.
+The game is controlled by a matrix:
+```Java
+grid = new Cell[14][16];  //14 rows and 16 columns.
+```
+
+Each cell is an object with current status:
+```Java
+public class Cell {
+    boolean black;
+    boolean wall;
+    boolean floor;
+    boolean box;
+    boolean ball;
+    boolean spirit;
+    int action;
+
+    public Cell() {
+        black = false;
+        wall = false;
+        floor = false;
+        box = false;
+        ball = false;
+        spirit = false;
+        action = NONE;
+    }
+}
+```
