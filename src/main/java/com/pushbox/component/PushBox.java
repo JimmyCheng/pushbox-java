@@ -1,8 +1,7 @@
 package com.pushbox.component;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -17,6 +16,8 @@ import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class PushBox extends JFrame {
 	private static final int IMG_BLACK = 0;
@@ -90,13 +91,14 @@ public class PushBox extends JFrame {
 
 		history = new Stack<Position>();
 	}
-	
+
 	private void initializeGUI() {
 		setTitle("Push Box");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(480, 420+60);
 		setResizable(false);
 
+		//add the canvas
 		lblView = new JLabel();
 
 		lblView.addKeyListener(new KeyListener() {
@@ -114,13 +116,42 @@ public class PushBox extends JFrame {
 		});
 
 		lblView.setFocusable(true);
-		
+
+		//add the statud bar.
 		lblStatus = new StatusBar();
 
 		Container cp = getContentPane();
 		cp.setLayout(new BorderLayout());
 		cp.add(lblView, BorderLayout.NORTH);
 		cp.add(lblStatus, BorderLayout.SOUTH);
+
+		//add menu
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+
+		JMenu gameMenu = new JMenu("Game");
+		menuBar.add(gameMenu);
+
+		// Game -> Jump to task
+		JMenuItem taskMenuItem = new JMenuItem(new AbstractAction("Jump to Task") {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println(e.getSource());
+				Component comp = (Component)(e.getSource());
+				Icon spiritIcon = new ImageIcon(IMG_Resource[IMG_PUSHU1]);
+				Object result =  JOptionPane.showInputDialog(comp,
+						"Enter the task Id(1..100):",
+						"Please input the task Id",
+						JOptionPane.INFORMATION_MESSAGE,
+						spiritIcon,
+						null,
+						null);
+				int task = Integer.parseInt((String)result);
+				if(task >0 && task <= 100) {
+					newGame(task);
+				}
+			}
+		});
+		gameMenu.add(taskMenuItem);
 	}
 
 	protected void processKeyDown(KeyEvent e) {
