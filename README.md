@@ -10,24 +10,25 @@ The intention of this game is to demonstrate the Java Swing desgin and MVC(model
 
 ****
 ## Table Content
-* [How to play](#HowToPlay)
-* [How to install](#HowToInstall)
-* [Design Highlight](#DesignHighlight)
+* [How to Play](#how-to-play)
+* [How to Install](#how-to-install)
+* [Design Highlight](#design-highlight)
+* [Other Implementations](#other-implementations)
 
-### HowToPlay
+How To Play
 -----------
 The game is simple, use key "up", "left", "right", "down" to move the little man around. Use key "u" to undo a step. e.g. for the task 1, it is displayed:
 
-![Task1](Task1.png){:height="962px" width="966px"}
+<img src="Task1.png" alt="Task1" title="Task 1" width="600" height="600">
 
 The target is to make sure all the balls are covered by the box.
 
 click the menu "Game" and select "Jump to Task", input the task ID from 1 to 100, e.g. input 33
 then the task 33 is displayed:
 
-![Task33](Task33.png){:height="968px" width="960px"}
+<img src="Task33.png" alt="Task33" title="Task 1" width="600" height="600">
 
-HowToInstall
+How To Install
 -----------
 Clone the git respository use `git clone` and import the project in eclipse or intelij.
 
@@ -60,3 +61,11 @@ public class Cell {
     }
 }
 ```
+In terms of the MVC design pattern, there the `grid` is the Model, the `canvas` is the view, the `keyUp/Down` event is the controller.
+
+Other Implementations
+-----------
+
+#### Delphi Version
+#### React Version
+
