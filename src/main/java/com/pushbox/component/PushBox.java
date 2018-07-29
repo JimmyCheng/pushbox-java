@@ -16,8 +16,6 @@ import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class PushBox extends JFrame {
 	private static final int IMG_BLACK = 0;
@@ -53,11 +51,13 @@ public class PushBox extends JFrame {
 		initializeGUI();
 	}
 
-	public void newGame(int taskId) {
-		initializeTask(taskId);
-		steps = 0;
-		lblStatus.setTaskId(taskId);
+	public void newGame(int taskID) {
+		this.taskID = taskID;
+		this.steps = 0;
+		lblStatus.setTaskID(taskID);
 		lblStatus.setStepNumber(steps);
+
+		initializeTask();
 
 		drawView();
 		animate();
@@ -135,7 +135,6 @@ public class PushBox extends JFrame {
 		// Game -> Jump to task
 		JMenuItem taskMenuItem = new JMenuItem(new AbstractAction("Jump to Task") {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(e.getSource());
 				Component comp = (Component)(e.getSource());
 				Icon spiritIcon = new ImageIcon(IMG_Resource[IMG_PUSHU1]);
 				Object result =  JOptionPane.showInputDialog(comp,
@@ -151,6 +150,15 @@ public class PushBox extends JFrame {
 				}
 			}
 		});
+
+		// Game -> Replay
+		JMenuItem replayMenuItem = new JMenuItem(new AbstractAction("Replay") {
+			public void actionPerformed(ActionEvent e) {
+				newGame(taskID);
+			}
+		});
+
+		gameMenu.add(replayMenuItem);
 		gameMenu.add(taskMenuItem);
 	}
 
@@ -349,8 +357,7 @@ public class PushBox extends JFrame {
 		timer.schedule(new TimerTaskTest(), 500, 500);
 	}
 
-	private boolean initializeTask(int taskID) {
-		this.taskID = taskID;
+	private boolean initializeTask() {
 
 		String fileName = "task/task" + taskID + ".tsk";
 

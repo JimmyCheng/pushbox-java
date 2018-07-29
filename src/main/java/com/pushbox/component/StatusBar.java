@@ -42,7 +42,7 @@ class StatusBar extends JPanel  {
 		//add(btnOption, BorderLayout.EAST);
 	}
 
-	public void setTaskId(int id) {
+	public void setTaskID(int id) {
 		taskPane.setText("You are at Task: " + id);
 	}
 
