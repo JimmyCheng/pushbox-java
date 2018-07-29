@@ -56,6 +56,7 @@ public class PushBox extends JFrame {
 		this.steps = 0;
 		lblStatus.setTaskID(taskID);
 		lblStatus.setStepNumber(steps);
+		history.clear();
 
 		initializeTask();
 
